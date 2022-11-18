@@ -1,10 +1,14 @@
 ﻿using System.Data;
 using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System;
 
 namespace DapperDemo
 {
-    internal class Program
+    class Program
     {
         static void Main(string[] args)
         {
@@ -15,19 +19,39 @@ namespace DapperDemo
             string connString = config.GetConnectionString("DefaultConnection");
             IDbConnection conn = new MySqlConnection(connString);
 
-            var repo = new DapperDepartmentRepository(conn);
+            var productRepository = new DapperProductRepository(conn);
 
-            Console.WriteLine("Type a new Department name");
+            
 
-            var newDepartment = Console.ReadLine();
-            repo.InsertDepartment(newDepartment);
-            var departments = repo.GetAllDepartments();
+            var productToUpdate = productRepository.GetProduct(887);
 
-            foreach (var dept in departments) 
+            productToUpdate.Name = "BelVita Cinnamon Brown Sugar Breakfast Biscuits";
+            productToUpdate.Price = 1.89;
+            productToUpdate.CategoryID = 10;
+            productToUpdate.OnSale = false;
+            productToUpdate.StockLevel = 380;
+
+            productRepository.UpdateProduct(productToUpdate);
+
+
+            var products = productRepository.GetAllProducts();
+            foreach (var product in products) 
             {
-                Console.WriteLine(dept.Name);            
+                Console.WriteLine($"ProductID:   {product.ProductID}");
+                Console.WriteLine($"Name:        {product.Name}");
+                Console.WriteLine($"Price:       {product.Price}");
+                Console.WriteLine($"Category ID: {product.CategoryID}");
+                Console.WriteLine($"OnSale:      {product.OnSale}");
+                Console.WriteLine($"Stock Level: {product.StockLevel}");
+                Console.WriteLine();
+                Console.WriteLine();
             }
+           
 
+
+
+            
+          
 
 
 
